@@ -1,0 +1,42 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+
+# Environment and sensitive keys / credentials
+*.pem
+*.key
+*accessKeys*
+*.csv
+*.env
+*.env.*
+
+# Personal and college documents in workspace
+*.pdf
+*.docx
+.~lock*
+*.jpeg
+*.jpg
+new sign.png
+siggnature.png
+
+# Executables & Large Installers
+*.exe
+*.msi
+
+# Miscellaneous competitive programming files
+*.cpp
+
+# Operating System & IDE
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.DS_Store
+.idea/
+.vscode/

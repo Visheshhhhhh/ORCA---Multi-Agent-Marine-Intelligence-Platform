@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ORCA - Marine Intelligence Platform</title>
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Leaflet.js CSS for mapping -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Dashboard -->
+        <aside class="sidebar">
+            <header class="logo-area">
+                <div class="logo-icon">🐋</div>
+                <div class="logo-text">
+                    <h1>ORCA</h1>
+                    <span>Marine Agent Intelligence</span>
+                </div>
+            </header>
+
+            <!-- Language and User Location Controls -->
+            <section class="controls-card">
+                <div class="control-group">
+                    <label for="language-select">🗣️ Select Language</label>
+                    <select id="language-select">
+                        <option value="en" selected>English</option>
+                        <option value="hi">हिन्दी (Hindi)</option>
+                        <option value="ta">தமிழ் (Tamil)</option>
+                        <option value="mr">मराठी (Marathi)</option>
+                        <option value="te">తెలుగు (Telugu)</option>
+                        <option value="ml">മലയാളം (Malayalam)</option>
+                        <option value="gu">ગુજરાતી (Gujarati)</option>
+                        <option value="bn">বাংলা (Bengali)</option>
+                    </select>
+                </div>
+                <button id="gps-btn" class="primary-btn">
+                    <span class="icon">📍</span> Share My GPS Location
+                </button>
+            </section>
+
+            <!-- Safety Dashboard (Aggregated reasoning) -->
+            <section id="safety-panel" class="dashboard-panel">
+                <div id="safety-card" class="status-card status-safe">
+                    <div class="status-header">
+                        <span class="status-label">VESSEL VENTURE SAFETY</span>
+                        <h2 id="safety-status">SAFE</h2>
+                    </div>
+                    <p id="safety-desc">Conditions are favorable for maritime operations.</p>
+                </div>
+
+                <!-- Boundaries / Geofence Alerts -->
+                <div id="geofence-alert" class="alert-box hidden">
+                    <div class="alert-header">🚨 GEOFENCE ALERT</div>
+                    <div id="geofence-msg">Approaching international maritime boundary.</div>
+                </div>
+
+                <!-- Autonomous Route Recommendation -->
+                <div id="routing-card" class="routing-card hidden">
+                    <div class="routing-header">
+                        <span class="routing-badge">🚀 AUTONOMOUS ALTERNATIVE PATH</span>
+                        <h3>Safe Zone Found!</h3>
+                    </div>
+                    <div class="routing-details">
+                        <div class="detail-item">
+                            <span class="label">Distance</span>
+                            <span id="route-dist" class="value">--</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="label">Heading</span>
+                            <span id="route-dir" class="value">--</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="label">New PFZ</span>
+                            <span id="route-pfz" class="value">--</span>
+                        </div>
+                    </div>
+                    <div class="routing-params">
+                        <span class="route-param-badge">🌡️ <span id="route-sst">--</span></span>
+                        <span class="route-param-badge">🌱 <span id="route-chl">--</span></span>
+                        <span class="route-param-badge">💨 <span id="route-wind">--</span></span>
+                    </div>
+                    <button id="plot-route-btn" class="secondary-btn">📍 Plot Safe Route on Map</button>
+                </div>
+            </section>
+
+            <!-- Marine Parameter Cards -->
+            <section class="parameters-grid">
+                <div class="param-card">
+                    <div class="param-icon">🐟</div>
+                    <div class="param-info">
+                        <span class="param-label">PFZ Probability</span>
+                        <h3 id="param-pfz">--</h3>
+                    </div>
+                </div>
+                <div class="param-card">
+                    <div class="param-icon">🌊</div>
+                    <div class="param-info">
+                        <span class="param-label">Wave Height</span>
+                        <h3 id="param-waves">--</h3>
+                    </div>
+                </div>
+                <div class="param-card">
+                    <div class="param-icon">💨</div>
+                    <div class="param-info">
+                        <span class="param-label">Wind Speed</span>
+                        <h3 id="param-wind">--</h3>
+                    </div>
+                </div>
+                <div class="param-card">
+                    <div class="param-icon">🌡️</div>
+                    <div class="param-info">
+                        <span class="param-label">Sea Temp (SST)</span>
+                        <h3 id="param-sst">--</h3>
+                    </div>
+                </div>
+                <div class="param-card">
+                    <div class="param-icon">📈</div>
+                    <div class="param-info">
+                        <span class="param-label">Tide Height</span>
+                        <h3 id="param-tide">--</h3>
+                    </div>
+                </div>
+                <div class="param-card">
+                    <div class="param-icon">🌱</div>
+                    <div class="param-info">
+                        <span class="param-label">Chlorophyll</span>
+                        <h3 id="param-chlor">--</h3>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TTS Spoken Voice Advisory Card -->
+            <section class="advisory-card">
+                <div class="advisory-header">
+                    <h3>📢 Marine Audio Advisory</h3>
+                    <button id="tts-btn" class="icon-btn" disabled>🔊 Play</button>
+                </div>
+                <div class="advisory-body">
+                    <p id="advisory-text">Select a coordinate on the map or lock your GPS to synthesize an autonomous marine advisory.</p>
+                </div>
+            </section>
+
+            <!-- Source Verification Card -->
+            <section class="advisory-card source-card">
+                <div class="advisory-header">
+                    <h3>🔍 Verify Data (Source Evidence)</h3>
+                </div>
+                <div class="advisory-body">
+                    <p style="font-size: 11px; color: var(--text-secondary); margin-bottom: 8px; line-height: 1.4;">
+                        Verify live telemetry directly from official space agency and weather satellite feeds:
+                    </p>
+                    <ul class="source-links" style="list-style: none; display: flex; flex-direction: column; gap: 6px; padding: 0; margin: 0;">
+                        <li><a id="link-sst" href="#" target="_blank" style="color: var(--accent-blue); text-decoration: none; font-size: 11px; font-weight: 600;">🔗 NOAA Satellite SST (CSV)</a></li>
+                        <li><a id="link-chl" href="#" target="_blank" style="color: var(--accent-blue); text-decoration: none; font-size: 11px; font-weight: 600;">🔗 NOAA Satellite Chlorophyll (CSV)</a></li>
+                        <li><a id="link-waves" href="#" target="_blank" style="color: var(--accent-blue); text-decoration: none; font-size: 11px; font-weight: 600;">🔗 Open-Meteo Waves Feed (JSON)</a></li>
+                        <li><a id="link-wind" href="#" target="_blank" style="color: var(--accent-blue); text-decoration: none; font-size: 11px; font-weight: 600;">🔗 Open-Meteo Wind Feed (JSON)</a></li>
+                        <li><a id="link-cyclones" href="#" target="_blank" style="color: var(--accent-blue); text-decoration: none; font-size: 11px; font-weight: 600;">🔗 GDACS Active Cyclones (JSON)</a></li>
+                    </ul>
+                </div>
+            </section>
+        </aside>
+
+        <!-- Main Map Area and Multi-turn Chat Panel -->
+        <main class="main-map-area">
+            <div id="map"></div>
+            
+            <!-- Chat Interface overlay -->
+            <div class="chat-container collapsed" id="chat-panel">
+                <header class="chat-header" id="chat-header-bar">
+                    <div class="chat-title">💬 Ask ORCA Agent (Contextual Chat)</div>
+                    <button id="toggle-chat-btn" class="icon-btn">▲</button>
+                </header>
+                <div class="chat-history" id="chat-history">
+                    <div class="chat-msg system">
+                        Hello! I am ORCA. Tap on the map to select a coordinate, then ask me questions about fishing safety, boundaries, or route optimization.
+                    </div>
+                </div>
+                <div class="chat-input-area">
+                    <input type="text" id="chat-input" placeholder="Type query (e.g. Is it safe to fish here?)...">
+                    <button id="send-btn" class="primary-btn">Send</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Leaflet.js scripting -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="index.js"></script>
+</body>
+</html>
